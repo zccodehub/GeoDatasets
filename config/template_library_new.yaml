@@ -1,0 +1,255 @@
+version: '3.0'
+description: 多句式混合逻辑骨架模板库 — 纯参照型、类型占位型、完整型混合，覆盖邻接、道路参照、纯方位、重合四大场景
+families:
+  SCENE-B_Opposite:
+    description: 马路对面参照（强依赖 road_name）
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    - road
+    - dir_text
+    core_required:
+    - landmark
+    - road
+    templates:
+    - 穿过{road}，{target}就在对面，紧挨着{landmark}的{dir_text}侧。
+    - 在{road}路对面，与{landmark}隔路相望的正是{target}。
+    - 过{road}到对面，{landmark}的{dir_text}方向有一家{target_type}。
+    - 在{road}斜对面，{landmark}的{dir_text}那边开着{target_type}。
+    - 到了{landmark}，过马路往{dir_text}瞧，对面就是您要找的地儿。
+    - 您呐，从{landmark}穿过{road}，正对着{dir_text}那头便是。
+    - 穿过{road}，你会看到{target}就在{landmark}的{dir_text}方向对面。
+    - '{target}就在{landmark}的{dir_text}那边路对面，穿过{road}就是了。'
+    - 顺着{road}过马路，{target}就在{landmark}对面的{dir_text}头儿。
+    - 只要从{landmark}出发，穿过{road}到对面，{dir_text}这个方向就是{target}。
+    - 要找{target}，记得穿过{road}，就在{landmark}{dir_text}对面等着你。
+    - 其实只要过了{road}，{target}就在{landmark}的{dir_text}那侧对面，很好找。
+    - 你知道吗？{target}就挨着{landmark}的{dir_text}方向，隔着{road}对着呢。
+    - 一过{road}，{landmark}{dir_text}那边有个{target}，很显眼。
+    - '{road}的对面，就是和{landmark}相对着的{target}。'
+    - '{target}就在{road}对面，跟{landmark}隔着马路望过去就能看到。'
+    - 往{landmark}的{dir_text}那边看，穿过{road}正好就是{target}。
+    - 你抬头看看，{target}就在{landmark}对面，横着{road}。
+    - 在{road}街对面，{target}正好跟{landmark}面对面。
+    - 如果你在{road}一边，过对面就是{target}，位置正对着{landmark}。
+    - 其实与{landmark}相对的{road}对面，就是{target}。
+    - 只要到{landmark}，过{road}往{dir_text}方向瞧，对面那家就是{target}。
+    - '{landmark}到了，过{road}，正对面{dir_text}方向就是{target}。'
+    - 顺着{landmark}一看，隔着{road}对面{dir_text}的地方就是{target}。
+  SCENE-B_SameSide:
+    description: 道路同侧参照
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    - road
+    - dir_text
+    core_required:
+    - landmark
+    - dir_text
+    templates:
+    - 沿着{road}走，{target}和{landmark}在同一侧，就在{landmark}往{dir_text}一点。
+    - 不用换边，顺着{road}，挨着{landmark}的{dir_text}侧就能看见{target}。
+    - 在{road}同侧，{landmark}的{dir_text}方向有一家{target_type}，不用过马路。
+    - 顺着{road}走，{landmark}的{dir_text}侧开着{target_type}。
+    - 您到了{landmark}，沿着{road}同侧往{dir_text}走几步就到了。
+    - 从{landmark}出发，不必穿马路，顺着{road}往{dir_text}方向找。
+    - 顺着{road}走，{target}跟{landmark}在一个方向，离{landmark}{dir_text}一点的位置。
+    - 其实{target}和{landmark}都在{road}同侧，{target}就在{landmark}的{dir_text}边。
+    - 顺着{road}走到{landmark}，再往{dir_text}靠一点就是{target}。
+    - 走{road}，不用过马路，{target}就在{landmark}的{dir_text}侧，很近。
+    - 其实，{landmark}和{target}都在{road}同一侧，相隔不远，{target}就在{landmark}的{dir_text}附近。
+    - 在{road}同侧，靠{landmark}的{dir_text}方向就有一家{target_type}，不用穿马路。
+    - 你看，{landmark}的{dir_text}方向，在{road}同一边就能找到{target_type}。
+    - 其实不用过马路，{landmark}的{dir_text}一侧就有一家{target_type}。
+    - 顺着{road}，靠{landmark}的{dir_text}方向，大概就能找到{target_type}，同一侧不用过马路。
+    - 你知道吗？在{road}同侧，{landmark}的{dir_text}方向就有一家{target_type}。
+    - 就在{road}的同一边，{landmark}{dir_text}方向的位置有{target_type}。
+    - 其实，{landmark}的{dir_text}方向在{road}同侧就有{target_type}，不用换边。
+    - 您到{landmark}了，顺着{road}同侧往{dir_text}走，很快就能看到{target}。
+    - 其实在{landmark}这里，沿着{road}同侧往{dir_text}方向走一会儿就是{target}。
+    - 在{landmark}附近，顺着{road}同侧往{dir_text}方向走几步，{target}就在那儿。
+    - 到了{landmark}，沿{road}同侧往{dir_text}方向走一点就是{target}。
+  SCENE-B_Intersection:
+    description: 交叉口/路口参照
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    - road
+    - dir_text
+    core_required:
+    - landmark
+    - dir_text
+    templates:
+    - 在{road}与{landmark}交会的路口，{target}就在{dir_text}那个角。
+    - 走到{landmark}路口，往{dir_text}一拐弯就是{target}。
+    - 到了{landmark}那个十字路口，{dir_text}角上有一家{target_type}。
+    - 在{road}和{landmark}交叉口，{dir_text}方向有{target_type}。
+    - 您到{landmark}路口，瞧一眼{dir_text}那边的拐角，就能找到。
+    - 顺着{road}走到{landmark}，拐向{dir_text}就是目的地附近。
+    - 在{road}和{landmark}交叉的那个路口，{target}就在{dir_text}这个方向的角落里。
+    - 在{landmark}那边的路口，和{road}交汇处的{dir_text}方向，就是{target}。
+    - 你到了{landmark}和{road}交叉口，瞧，{target}就在{dir_text}那边的角落。
+    - 一到{road}和{landmark}交汇口，{target}就在{dir_text}角的位置。
+    - 走到{landmark}的路口，朝着{dir_text}拐过去就是{target}了。
+    - 到{landmark}路口了，顺着{dir_text}那边拐弯，就能看到{target}。
+    - 在{landmark}的路口，往{dir_text}那头一转弯就是{target}。
+    - 等你到了{landmark}路口，赶紧往{dir_text}拐，{target}就在那个方向。
+    - 去到{landmark}的交叉口，往{dir_text}拐弯，{target}基本就在那。
+    - 你只要在{landmark}路口往{dir_text}方向一转，就是{target}了。
+    - 走到{landmark}交叉口，拐{dir_text}，就能见到{target}。
+    - 在{landmark}十字口，{dir_text}角落里就是一家{target_type}。
+    - 你一到{landmark}那边的路口，{dir_text}角能看到有{target_type}。
+    - 去到{landmark}十字路口，{dir_text}的角落有个{target_type}。
+    - 在{landmark}交会的十字口，{dir_text}那头有一家{target_type}。
+    - 你知道吗？在{landmark}的路口，{dir_text}那个角正好有一家{target_type}。
+  SCENE-A:
+    description: 显式邻接（Abutting）
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    core_required:
+    - landmark
+    templates:
+    - '{target}紧挨着{landmark}，几乎贴在一块儿。'
+    - 从{landmark}出来，隔壁就是{target}，走两步就到。
+    - '{landmark}旁边紧挨着一家{target_type}，一墙之隔。'
+    - 紧邻{landmark}的是一处{target_type}。
+    - 到了{landmark}，旁边就是咱们要找的地方。
+    - 您瞧见{landmark}，挨着它的那个就是。
+    - '{target}就在{landmark}旁边，几乎连在一起的感觉。'
+    - 顺着{landmark}看过去，{target}是紧挨着的，两家脸贴脸。
+    - '{landmark}挨着的就是{target}，走过去就是了。'
+    - 其实{target}和{landmark}差不多连着，几乎分不开。
+    - '{landmark}和{target}之间几乎没有距离，直接连一起。'
+    - 从{landmark}出来就是{target}，离得特别近，走一步到。
+    - 走出{landmark}，旁边立刻能见到{target}，几乎不用找。
+    - 你只要从{landmark}出来，抬头就是{target}。
+    - 其实{target}就在{landmark}隔壁，迈几步就能到。
+    - 穿过{landmark}门口，{target}立马就到了。
+    - 出了{landmark}，随便转个身就是{target}，两步路。
+    - 从{landmark}走出来，{target}就在隔壁，没多远。
+    - '{landmark}旁边就有一家{target_type}，只隔了一堵墙。'
+    - 你会发现{landmark}和一家{target_type}只差一道墙。
+    - '{target_type}就贴着{landmark}，中间只隔一面墙。'
+    - '{landmark}旁边靠着一家{target_type}，隔墙就是。'
+    - 在{landmark}的旁边，有一家{target_type}，两家挨着。
+    - 其实{landmark}和{target_type}就是一墙之隔，特别近。
+  SCENE-D:
+    description: 重合/包含（Coincident）
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    core_required:
+    - landmark
+    templates:
+    - '{target}就在{landmark}里面，实际上是同一处地方。'
+    - '{target}与{landmark}位置完全重合。'
+    - '{landmark}这个位置，其实就是{target_type}的所在地。'
+    - 您要找的{target_type}，就在{landmark}那栋楼里。
+    - 到了{landmark}，目的地就在这儿，不用再挪步了。
+    - 您到了{landmark}，站的地方就是目的地。
+    - '{target}就在{landmark}里头，跟{landmark}其实是一回事。'
+    - 你只要进到{landmark}，其实就是到了{target}所在的地方。
+    - 去了{landmark}，估摸着就到{target}那儿了，其实都在一块。
+    - 其实{landmark}里面就是{target}，没必要再找别的地方。
+    - '{target}和{landmark}是同一个地方，你进了{landmark}就等于到了。'
+    - 顺着走进{landmark}，其实就是到{target}那儿了，俩就挨着。
+    - 你知道吗？{target_type}其实就在{landmark}里面，俩地方合一了。
+    - '{landmark}这个地方，正好就是{target_type}的所在地。'
+    - 说起{landmark}，其实就是{target_type}所在的地方了。
+    - 其实你到{landmark}，也就是到了{target_type}的位置。
+    - 把{landmark}这儿当作{target_type}的地方，没错。
+    - '{target_type}就在{landmark}这里，别的地儿不用去了。'
+    - 你要找{target_type}，其实就得去{landmark}这儿。
+    - '{landmark}其实就是{target_type}的位置，你懂的。'
+    - 你知道吗？{landmark}这地方就是{target_type}的所在地。
+    - 到{landmark}就行了，目的地就在这儿，不用挪动。
+    - 一到{landmark}，你目的地就到了，不用再费劲。
+    - 把脚踏进{landmark}，其实就到了目的地，别再找了。
+    - 你只要到了{landmark}，目的地就在这儿，直接就能看到。
+    - 到{landmark}这地方，目的地就在这儿，别再跑了。
+    - 其实目的地就在{landmark}里头，到这儿就算到家了。
+    - 你知道吗？只要到{landmark}，目的地就在这儿，不用再找。
+  SCENE-C:
+    description: 纯方位+距离导向（Isolated/Detour）
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    - dir_text
+    - dist_text
+    core_required:
+    - landmark
+    - dir_text
+    - dist_text
+    templates:
+    - '{target}在{landmark}的{dir_text}方向，大约{dist_text}远。'
+    - 从{landmark}往{dir_text}走，{dist_text}左右就能看到{target}。
+    - 您顺着{landmark}的{dir_text}方向，走个{dist_text}，就是{target}了。
+    - 在{landmark}的{dir_text}方向，约{dist_text}处有家{target_type}。
+    - 从{landmark}往{dir_text}走{dist_text}左右，会碰到一家{target_type}。
+    - 离{landmark}大约{dist_text}，{dir_text}那边就是{target_type}。
+    - 您呐，从{landmark}往{dir_text}走上{dist_text}，就差不多了。
+    - 到了{landmark}，朝{dir_text}走大约{dist_text}，目的地就在附近。
+    - 顺着{landmark}的{dir_text}方向走{dist_text}，您的目标就在前头。
+    - 其实从{landmark}往{dir_text}走{dist_text}，您要找的就在那一片。
+    - '{target}就在{landmark}的{dir_text}，距离大概{dist_text}。'
+    - 往{landmark}的{dir_text}看去，{target}离那儿差不多{dist_text}远。
+    - '{landmark}的{dir_text}方向是{target}，估摸着离这里有{dist_text}。'
+    - 其实{target}是在{landmark}的{dir_text}一侧，距离差不多{dist_text}。
+    - 你知道吗，{target}离{landmark}的{dir_text}方向大约有{dist_text}那么远。
+    - 顺着{landmark}的{dir_text}方向找，{target}就在差不多{dist_text}的位置。
+    - 把目光投向{landmark}的{dir_text}，{target}大约隔着{dist_text}。
+    - '{target}距离{landmark}的{dir_text}方向，大概有{dist_text}这么远。'
+    - 顺着{landmark}往{dir_text}方向走，差不多{dist_text}就到{target}了。
+    - 其实从{landmark}的{dir_text}方向去，{dist_text}附近就是{target}。
+    - 从{landmark}往{dir_text}带着走，大概{dist_text}处就是{target}。
+    - 你走出{landmark}，往{dir_text}方向约{dist_text}，就能看到{target}。
+    - 在{landmark}的{dir_text}方向，大约{dist_text}的位置有一家{target_type}。
+    - 你要是在{landmark}的{dir_text}方向走，差不多{dist_text}就能找到一家{target_type}。
+    - 顺着{landmark}的{dir_text}方向，大概{dist_text}会有家{target_type}。
+    - 在{landmark}的{dir_text}那边，估摸着{dist_text}处有家{target_type}。
+    - 把视线投向{landmark}的{dir_text}，差不多{dist_text}就有家{target_type}。
+  FALLBACK_GENERIC:
+    description: 终极保底句式
+    valid_slots:
+    - landmark
+    - target
+    - target_type
+    core_required:
+    - landmark
+    templates:
+    - '{target}位于{landmark}附近。'
+    - 您要找的{target}就在{landmark}周边。
+    - '{landmark}附近有一家{target_type}。'
+    - 在{landmark}周边能找到{target_type}。
+    - 到了{landmark}，附近就是您要找的地方。
+    - 从{landmark}开始找，那地儿就在周围一带。
+    - '{target}就在{landmark}旁边附近。'
+    - 你到{landmark}这儿，{target}就在附近。
+    - 其实在{landmark}周围就能找到{target}。
+    - 你知道吗？{target}估摸着就在{landmark}附近。
+    - 顺着{landmark}这块儿，附近应该有{target}。
+    - 把{target}放在{landmark}附近就对了。
+    - '{landmark}附近能看到{target}。'
+    - 在{landmark}附近，有一家{target_type}。
+    - 你到{landmark}，附近有个{target_type}店。
+    - 其实{landmark}周围就有一家{target_type}。
+    - '{target_type}就在{landmark}旁边那块儿。'
+    - 你知道吗？在{landmark}附近能找到一家{target_type}。
+    - 顺着{landmark}这儿，有一家{target_type}。
+    - 把{target_type}安排在{landmark}附近没错。
+    - 看见{landmark}，就能找到一家{target_type}。
+    - 等你到了{landmark}，附近就是您要找的地方。
+    - 其实到{landmark}这儿，周边就是目的地了。
+    - 你顺着走到{landmark}，旁边就是您要找的地方。
+    - 你知道吗？到{landmark}一看，附近就是。
+    - 把位置选在{landmark}附近，基本就是您要找的地方。
+    - 到了{landmark}，您要找的地方就在周围。
+    - 只要到{landmark}，附近就能找到目的地。
+    - 看到{landmark}，旁边就是您要找的地方。

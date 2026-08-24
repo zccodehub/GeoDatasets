@@ -1,0 +1,335 @@
+{
+  "version": "2.0",
+  "description": "北京市POI认知显著性评估 - 专有名词特征集（扩展版）",
+  "data_source": [
+    "北京市文物局（A级景区名录）",
+    "北京市商务局（夜京城/网红打卡地名单）",
+    "北京旅游网（官方推荐地标）",
+    "北京老字号协会（中华老字号名录）",
+    "北京日报/北京商报（年度商业品牌榜单）",
+    "大众点评/美团（热门收藏榜Top 20）",
+    "高德地图/百度地图（POI分类及热度）",
+    "百度百科（独立词条收录情况）"
+  ],
+  "last_updated": "2026-08-03",
+  "categories": [
+    {
+      "id": "historical_landmark",
+      "name": "历史地标与文化遗迹",
+      "weight_base": 0.40,
+      "subcategories": [
+        {
+          "id": "palace_garden",
+          "name": "宫殿/皇家园囿",
+          "keywords": [
+            {"word": "故宫", "weight": 0.50, "mode": "exact"},
+            {"word": "紫禁城", "weight": 0.50, "mode": "exact"},
+            {"word": "颐和园", "weight": 0.45, "mode": "exact"},
+            {"word": "圆明园", "weight": 0.45, "mode": "exact"},
+            {"word": "天坛", "weight": 0.45, "mode": "exact"},
+            {"word": "地坛", "weight": 0.40, "mode": "exact"},
+            {"word": "北海公园", "weight": 0.40, "mode": "exact"},
+            {"word": "景山公园", "weight": 0.38, "mode": "exact"},
+            {"word": "中山公园", "weight": 0.35, "mode": "exact"},
+            {"word": "恭王府", "weight": 0.40, "mode": "exact"},
+            {"word": "醇亲王府", "weight": 0.35, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "ancient_architecture",
+          "name": "古代建筑/宗教场所",
+          "keywords": [
+            {"word": "天安门", "weight": 0.50, "mode": "exact"},
+            {"word": "正阳门", "weight": 0.40, "mode": "exact"},
+            {"word": "德胜门", "weight": 0.35, "mode": "exact"},
+            {"word": "钟鼓楼", "weight": 0.38, "mode": "exact"},
+            {"word": "孔庙", "weight": 0.40, "mode": "exact"},
+            {"word": "国子监", "weight": 0.40, "mode": "exact"},
+            {"word": "大觉寺", "weight": 0.35, "mode": "exact"},
+            {"word": "戒台寺", "weight": 0.33, "mode": "exact"},
+            {"word": "历代帝王庙", "weight": 0.38, "mode": "exact"},
+            {"word": "东岳庙", "weight": 0.33, "mode": "exact"},
+            {"word": "雍和宫", "weight": 0.40, "mode": "exact"},
+            {"word": "白云观", "weight": 0.33, "mode": "exact"},
+            {"word": "大栅栏", "weight": 0.35, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "great_wall_tombs",
+          "name": "长城/陵寝",
+          "keywords": [
+            {"word": "八达岭长城", "weight": 0.45, "mode": "exact"},
+            {"word": "慕田峪长城", "weight": 0.40, "mode": "exact"},
+            {"word": "明十三陵", "weight": 0.40, "mode": "exact"},
+            {"word": "卢沟桥", "weight": 0.40, "mode": "exact"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern_landmark",
+      "name": "现代地标与城市新标志",
+      "weight_base": 0.35,
+      "subcategories": [
+        {
+          "id": "iconic_buildings",
+          "name": "标志性建筑",
+          "keywords": [
+            {"word": "鸟巢", "weight": 0.45, "mode": "exact"},
+            {"word": "国家体育场", "weight": 0.42, "mode": "exact"},
+            {"word": "水立方", "weight": 0.40, "mode": "exact"},
+            {"word": "国家游泳中心", "weight": 0.38, "mode": "exact"},
+            {"word": "中国尊", "weight": 0.40, "mode": "exact"},
+            {"word": "中信大厦", "weight": 0.35, "mode": "exact"},
+            {"word": "央视大楼", "weight": 0.38, "mode": "exact"},
+            {"word": "中央电视台总部", "weight": 0.38, "mode": "exact"},
+            {"word": "中央广播电视塔", "weight": 0.38, "mode": "exact"},
+            {"word": "国家大剧院", "weight": 0.42, "mode": "exact"},
+            {"word": "大兴国际机场", "weight": 0.40, "mode": "exact"},
+            {"word": "北京大兴机场", "weight": 0.38, "mode": "exact"},
+            {"word": "丽泽SOHO", "weight": 0.30, "mode": "exact"},
+            {"word": "首钢园", "weight": 0.32, "mode": "exact"},
+            {"word": "奥林匹克公园", "weight": 0.35, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "memorial_squares",
+          "name": "纪念性场所/广场",
+          "keywords": [
+            {"word": "天安门广场", "weight": 0.50, "mode": "exact"},
+            {"word": "人民英雄纪念碑", "weight": 0.45, "mode": "exact"},
+            {"word": "毛主席纪念堂", "weight": 0.45, "mode": "exact"},
+            {"word": "人民大会堂", "weight": 0.45, "mode": "exact"},
+            {"word": "北京展览馆", "weight": 0.35, "mode": "exact"},
+            {"word": "民族文化宫", "weight": 0.35, "mode": "exact"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cultural_institution",
+      "name": "文化机构与科教设施",
+      "weight_base": 0.35,
+      "subcategories": [
+        {
+          "id": "museum",
+          "name": "博物馆/纪念馆",
+          "keywords": [
+            {"word": "国家博物馆", "weight": 0.45, "mode": "exact"},
+            {"word": "中国国家博物馆", "weight": 0.48, "mode": "exact"},
+            {"word": "故宫博物院", "weight": 0.50, "mode": "exact"},
+            {"word": "首都博物馆", "weight": 0.40, "mode": "exact"},
+            {"word": "中国美术馆", "weight": 0.40, "mode": "exact"},
+            {"word": "北京鲁迅博物馆", "weight": 0.38, "mode": "exact"},
+            {"word": "中国地质博物馆", "weight": 0.35, "mode": "exact"},
+            {"word": "中国农业博物馆", "weight": 0.33, "mode": "exact"},
+            {"word": "中国航天博物馆", "weight": 0.35, "mode": "exact"},
+            {"word": "中国古动物馆", "weight": 0.33, "mode": "exact"},
+            {"word": "中国科学技术馆", "weight": 0.38, "mode": "exact"},
+            {"word": "中国铁道博物馆", "weight": 0.33, "mode": "exact"},
+            {"word": "民航博物馆", "weight": 0.30, "mode": "exact"},
+            {"word": "中国园林博物馆", "weight": 0.33, "mode": "exact"},
+            {"word": "中国紫檀博物馆", "weight": 0.30, "mode": "exact"},
+            {"word": "中国人民抗日战争纪念馆", "weight": 0.40, "mode": "exact"},
+            {"word": "北京天文馆", "weight": 0.35, "mode": "exact"},
+            {"word": "中国考古博物馆", "weight": 0.35, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "library_art",
+          "name": "图书馆/美术馆/文化宫",
+          "keywords": [
+            {"word": "国家图书馆", "weight": 0.38, "mode": "exact"},
+            {"word": "中国国家图书馆", "weight": 0.40, "mode": "exact"},
+            {"word": "首都图书馆", "weight": 0.32, "mode": "exact"},
+            {"word": "北京城市图书馆", "weight": 0.35, "mode": "exact"},
+            {"word": "北京艺术中心", "weight": 0.35, "mode": "exact"},
+            {"word": "北京大运河博物馆", "weight": 0.35, "mode": "exact"},
+            {"word": "劳动人民文化宫", "weight": 0.32, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "performing_arts",
+          "name": "演出场馆",
+          "keywords": [
+            {"word": "国家大剧院", "weight": 0.42, "mode": "exact"},
+            {"word": "北京音乐厅", "weight": 0.32, "mode": "exact"},
+            {"word": "保利剧院", "weight": 0.30, "mode": "exact"},
+            {"word": "天桥艺术中心", "weight": 0.28, "mode": "exact"},
+            {"word": "北京人艺戏剧博物馆", "weight": 0.28, "mode": "exact"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "commercial_brand",
+      "name": "商业品牌与消费地标",
+      "weight_base": 0.25,
+      "subcategories": [
+        {
+          "id": "time_honored",
+          "name": "北京老字号/中华老字号",
+          "keywords": [
+            {"word": "同仁堂", "weight": 0.35, "mode": "exact"},
+            {"word": "全聚德", "weight": 0.35, "mode": "exact"},
+            {"word": "东来顺", "weight": 0.32, "mode": "exact"},
+            {"word": "便宜坊", "weight": 0.32, "mode": "exact"},
+            {"word": "稻香村", "weight": 0.30, "mode": "exact"},
+            {"word": "吴裕泰", "weight": 0.30, "mode": "exact"},
+            {"word": "张一元", "weight": 0.28, "mode": "exact"},
+            {"word": "内联升", "weight": 0.28, "mode": "exact"},
+            {"word": "瑞蚨祥", "weight": 0.28, "mode": "exact"},
+            {"word": "荣宝斋", "weight": 0.30, "mode": "exact"},
+            {"word": "一得阁", "weight": 0.25, "mode": "exact"},
+            {"word": "王致和", "weight": 0.25, "mode": "exact"},
+            {"word": "六必居", "weight": 0.25, "mode": "exact"},
+            {"word": "天福号", "weight": 0.25, "mode": "exact"},
+            {"word": "月盛斋", "weight": 0.25, "mode": "exact"},
+            {"word": "都一处", "weight": 0.25, "mode": "exact"},
+            {"word": "中国照相馆", "weight": 0.25, "mode": "exact"},
+            {"word": "大北照相馆", "weight": 0.22, "mode": "exact"},
+            {"word": "中华书局", "weight": 0.30, "mode": "exact"},
+            {"word": "盛锡福", "weight": 0.22, "mode": "exact"},
+            {"word": "同升和", "weight": 0.22, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "shopping_mall",
+          "name": "购物中心/商业地标",
+          "keywords": [
+            {"word": "SKP", "weight": 0.32, "mode": "exact"},
+            {"word": "北京SKP", "weight": 0.35, "mode": "exact"},
+            {"word": "国贸商城", "weight": 0.35, "mode": "exact"},
+            {"word": "三里屯太古里", "weight": 0.35, "mode": "exact"},
+            {"word": "王府中环", "weight": 0.30, "mode": "exact"},
+            {"word": "蓝色港湾", "weight": 0.28, "mode": "exact"},
+            {"word": "北京apm", "weight": 0.25, "mode": "exact"},
+            {"word": "东方新天地", "weight": 0.25, "mode": "exact"},
+            {"word": "金融街购物中心", "weight": 0.25, "mode": "exact"},
+            {"word": "朝阳合生汇", "weight": 0.25, "mode": "exact"},
+            {"word": "北京华天", "weight": 0.25, "mode": "exact"},
+            {"word": "菜百首饰", "weight": 0.25, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "retail_brand",
+          "name": "知名零售/消费品牌（总部或旗舰店）",
+          "keywords": [
+            {"word": "京东", "weight": 0.30, "mode": "exact"},
+            {"word": "美团", "weight": 0.25, "mode": "exact"},
+            {"word": "小米", "weight": 0.28, "mode": "exact"},
+            {"word": "泡泡玛特", "weight": 0.25, "mode": "exact"},
+            {"word": "居然之家", "weight": 0.22, "mode": "exact"},
+            {"word": "国美", "weight": 0.22, "mode": "exact"},
+            {"word": "苏宁", "weight": 0.22, "mode": "exact"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transport_hub",
+      "name": "交通枢纽与门户",
+      "weight_base": 0.30,
+      "subcategories": [
+        {
+          "id": "airport_railway",
+          "name": "机场/火车站",
+          "keywords": [
+            {"word": "北京大兴国际机场", "weight": 0.40, "mode": "exact"},
+            {"word": "大兴机场", "weight": 0.38, "mode": "exact"},
+            {"word": "首都机场", "weight": 0.38, "mode": "exact"},
+            {"word": "北京首都国际机场", "weight": 0.40, "mode": "exact"},
+            {"word": "北京站", "weight": 0.35, "mode": "exact"},
+            {"word": "北京西站", "weight": 0.35, "mode": "exact"},
+            {"word": "北京南站", "weight": 0.35, "mode": "exact"},
+            {"word": "北京北站", "weight": 0.30, "mode": "exact"},
+            {"word": "北京丰台站", "weight": 0.30, "mode": "exact"},
+            {"word": "北京朝阳站", "weight": 0.28, "mode": "exact"},
+            {"word": "北京城市副中心站", "weight": 0.32, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "transport_interchange",
+          "name": "大型交通枢纽",
+          "keywords": [
+            {"word": "东直门交通枢纽", "weight": 0.30, "mode": "exact"},
+            {"word": "宋家庄交通枢纽", "weight": 0.28, "mode": "exact"},
+            {"word": "动物园交通枢纽", "weight": 0.25, "mode": "exact"},
+            {"word": "清河站", "weight": 0.28, "mode": "exact"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "education_medical",
+      "name": "教育科研与医疗中心",
+      "weight_base": 0.25,
+      "subcategories": [
+        {
+          "id": "university",
+          "name": "知名高校",
+          "keywords": [
+            {"word": "北京大学", "weight": 0.40, "mode": "exact"},
+            {"word": "清华大学", "weight": 0.40, "mode": "exact"},
+            {"word": "中国人民大学", "weight": 0.35, "mode": "exact"},
+            {"word": "北京师范大学", "weight": 0.33, "mode": "exact"},
+            {"word": "北京航空航天大学", "weight": 0.33, "mode": "exact"},
+            {"word": "北京理工大学", "weight": 0.30, "mode": "exact"},
+            {"word": "中国农业大学", "weight": 0.28, "mode": "exact"},
+            {"word": "中央民族大学", "weight": 0.28, "mode": "exact"},
+            {"word": "北京交通大学", "weight": 0.28, "mode": "exact"},
+            {"word": "北京邮电大学", "weight": 0.28, "mode": "exact"},
+            {"word": "中国政法大学", "weight": 0.28, "mode": "exact"},
+            {"word": "中央财经大学", "weight": 0.25, "mode": "exact"},
+            {"word": "对外经济贸易大学", "weight": 0.25, "mode": "exact"},
+            {"word": "北京外国语大学", "weight": 0.25, "mode": "exact"},
+            {"word": "中国传媒大学", "weight": 0.25, "mode": "exact"},
+            {"word": "中国科学院大学", "weight": 0.32, "mode": "exact"},
+            {"word": "北京大学医学部", "weight": 0.30, "mode": "exact"},
+            {"word": "北京协和医学院", "weight": 0.32, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "hospital",
+          "name": "知名医院",
+          "keywords": [
+            {"word": "协和医院", "weight": 0.35, "mode": "exact"},
+            {"word": "北京协和医院", "weight": 0.38, "mode": "exact"},
+            {"word": "解放军总医院", "weight": 0.35, "mode": "exact"},
+            {"word": "301医院", "weight": 0.35, "mode": "exact"},
+            {"word": "北京大学人民医院", "weight": 0.30, "mode": "exact"},
+            {"word": "北京大学第三医院", "weight": 0.30, "mode": "exact"},
+            {"word": "北京大学第一医院", "weight": 0.30, "mode": "exact"},
+            {"word": "北京天坛医院", "weight": 0.32, "mode": "exact"},
+            {"word": "北京儿童医院", "weight": 0.30, "mode": "exact"},
+            {"word": "北京朝阳医院", "weight": 0.28, "mode": "exact"},
+            {"word": "北京安贞医院", "weight": 0.28, "mode": "exact"},
+            {"word": "北京同仁医院", "weight": 0.30, "mode": "exact"},
+            {"word": "北京积水潭医院", "weight": 0.28, "mode": "exact"},
+            {"word": "北京医院", "weight": 0.28, "mode": "exact"},
+            {"word": "中日友好医院", "weight": 0.28, "mode": "exact"}
+          ]
+        },
+        {
+          "id": "research_institute",
+          "name": "重点科研机构",
+          "keywords": [
+            {"word": "中国科学院", "weight": 0.32, "mode": "exact"},
+            {"word": "中国社会科学院", "weight": 0.28, "mode": "exact"},
+            {"word": "中国工程院", "weight": 0.30, "mode": "exact"}
+          ]
+        }
+      ]
+    }
+  ],
+  "stopwords": [
+    "店", "场", "站", "点", "所", "处", "部", "室", "厅", "局", "公司", "有限",
+    "股份", "集团", "连锁", "分店", "分号", "北京", "北京市", "中国", "中华"
+  ],
+  "usage_notes": {
+    "matching_strategy": "POI名称先去除行政区前缀（如'北京市'）和stopwords，然后逐词与keywords中的word进行精确匹配（mode=exact）。若POI名称包含多个关键词，取匹配到的最高权重作为该POI的专名强度得分（NameScore）。",
+    "score_calculation": "单个POI的最终认知显著性得分 = weight_base（类别基础分） + NameScore，其中NameScore来自匹配到的关键词权重。若未匹配任何关键词，NameScore=0，仅获得类别基础分。",
+    "category_aggregation": "对于某一三级类别，其整体知名度基准（即用于替换百度指数的'类别基准热度'） = 该类别下所有POI的NameScore的平均值 × 10（归一化至0-5分制），以便与搜索指数量级对齐。",
+    "data_update_frequency": "建议每季度根据官方新发布的地标名单、老字号认定、商业榜单更新一次关键词库，保持时效性。"
+  }
+}

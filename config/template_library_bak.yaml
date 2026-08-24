@@ -1,0 +1,111 @@
+version: "2.0"
+description: "混合使用目标名称和目标类型的逻辑骨架模板库，所有模板均包含参照点信息"
+
+families:
+  # ==================== 1. SCENE_B 道路参照族 ====================
+  SCENE-B_Opposite:
+    description: "马路对面参照（强依赖 road_name）"
+    valid_slots: ["landmark", "target", "target_type", "road", "dir_text"]
+    core_required: ["landmark", "road"]
+    templates:
+      # 风格①：显式目标名称
+      - "穿过{road}，{target}就在对面，{landmark}的{dir_text}侧。"
+      - "在{road}路南侧，与{landmark}隔路相望的就是{target}。"
+      - "从{landmark}出发，需横穿{road}，{target}位于路对面{dir_text}。"
+      # 风格②：仅使用目标类型
+      - "过{road}到马路对面，{landmark}斜{dir_text}有一家{target_type}。"
+      - "在{road}对面，{landmark}的{dir_text}方向有{target_type}。"
+      - "穿过{road}，{landmark}正对面有一处{target_type}。"
+
+  SCENE-B_SameSide:
+    description: "道路同侧参照"
+    valid_slots: [ "landmark", "target", "target_type", "road", "dir_text" ]
+    core_required: [ "landmark", "dir_text"]
+    templates:
+      - "沿着{road}走，{target}和{landmark}在同一边，位于{landmark}的{dir_text}侧。"
+      - "不用过马路，{target}就在{road}同侧，挨着{landmark}往{dir_text}走。"
+      - "{road}路{dir_text}，{landmark}旁边就是{target}。"
+      # 类型版
+      - "沿{road}同侧，{landmark}往{dir_text}不远处有一家{target_type}。"
+      - "在{road}同侧，{landmark}的{dir_text}方向有{target_type}。"
+      - "无需过马路，{landmark}同侧{dir_text}可见{target_type}。"
+
+  SCENE-B_Intersection:
+    description: "交叉口/路口参照"
+    valid_slots: [ "landmark", "target", "target_type", "road", "dir_text" ]
+    core_required: [ "landmark", "dir_text" ]
+    templates:
+      - "在{road}与{landmark}的交叉口附近，{target}在{dir_text}角。"
+      - "走到{landmark}的路口，往{dir_text}拐角就是{target}。"
+      # 类型版
+      - "在{landmark}路口，{dir_text}角有一家{target_type}。"
+      - "十字路口{dir_text}，临近{landmark}有{target_type}。"
+      - "过{landmark}路口往{dir_text}，可见{target_type}。"
+
+  # ==================== 2. SCENE-A 显式邻接 ====================
+  SCENE-A:
+    description: "显式邻接（Abutting）"
+    valid_slots: [ "landmark", "target", "target_type"]
+    core_required: [ "landmark"]
+    templates:
+      - "{target}紧挨着{landmark}。"
+      - "从{landmark}出来，隔壁就是{target}。"
+      - "{target}就在{landmark}的旁边，几乎是连在一起的。"
+      - "一墙之隔，{target}就在{landmark}隔壁。"
+      # 类型版
+      - "{landmark}隔壁有一家{target_type}。"
+      - "紧邻{landmark}的是一家{target_type}。"
+      - "{landmark}旁边紧挨着一处{target_type}。"
+      - "与{landmark}一墙之隔的是{target_type}。"
+
+  # ==================== 3. SCENE-D 重合/包含 ====================
+  SCENE-D:
+    description: "重合/包含（Coincident）"
+    valid_slots: [ "landmark", "target", "target_type" ]
+    core_required: [ "landmark" ]
+    required_slots: ["landmark", "target", "target_type"]
+    templates:
+      - "{target}就在{landmark}里面（原址位置）。"
+      - "{target}与{landmark}位置重合。"
+      # 类型版
+      - "{landmark}所在位置即是{target_type}。"
+      - "{landmark}原址现为{target_type}。"
+
+  # ==================== 4. SCENE-C 纯方位距离（核心大族） ====================
+  SCENE-C:
+    description: "纯方位+距离导向（Isolated/Detour）"
+    valid_slots: [ "landmark", "target", "target_type", "dir_text", "dist_text"]
+    core_required: [ "landmark", "dir_text", "dist_text" ]
+    templates:
+      - "{target}在{landmark}的{dir_text}方向，大约{dist_text}。"
+      - "从{landmark}往{dir_text}走{dist_text}左右就是{target}。"
+      - "{target}距离{landmark}约{dist_text}，方位在{dir_text}。"
+      - "看{landmark}的{dir_text}边，{dist_text}外就是{target}。"
+      - "{target}大概在{landmark}的{dir_text}，相距{dist_text}。"
+      - "往{dir_text}走，过了{landmark}约{dist_text}就到了{target}。"
+      - "从{landmark}算起，{dir_text}方向{dist_text}开外，就是{target}。"
+      # 类型版（大量增加）
+      - "在{landmark}的{dir_text}方向，约{dist_text}处有{target_type}。"
+      - "从{landmark}往{dir_text}走{dist_text}左右，可找到{target_type}。"
+      - "{landmark}{dir_text}侧，{dist_text}外有一家{target_type}。"
+      - "距离{landmark}{dist_text}的{dir_text}方向，是{target_type}。"
+      - "{landmark}的{dir_text}边，{dist_text}远的地方有{target_type}。"
+      - "沿{landmark}往{dir_text}，大约{dist_text}可见{target_type}。"
+      - "{landmark}的{dir_text}方，相距{dist_text}处为{target_type}。"
+      - "从{landmark}出发，{dir_text}行{dist_text}，有{target_type}。"
+      - "{landmark}的{dir_text}侧，{dist_text}开外是{target_type}。"
+      - "{dist_text}外的{dir_text}方向，临近{landmark}有{target_type}。"
+
+  # ==================== 5. 通用保底 ====================
+  FALLBACK_GENERIC:
+    description: "终极保底句式"
+    valid_slots: [ "landmark", "target", "target_type" ]
+    core_required: [ "landmark" ]
+    required_slots: ["landmark", "target", "target_type"]
+    templates:
+      - "{target}位于{landmark}附近。"
+      - "{target}在{landmark}周边区域。"
+      # 类型版
+      - "{landmark}附近有一家{target_type}。"
+      - "{landmark}周边有{target_type}。"
+      - "在{landmark}周围可找到{target_type}。"

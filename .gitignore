@@ -1,0 +1,16 @@
+# 编译产物
+__pycache__/
+*.pyc
+
+# IDE 配置
+.idea/
+
+# 日志和数据库
+*.log
+data/*.csv
+
+# 环境变量
+.env
+
+
+output/
