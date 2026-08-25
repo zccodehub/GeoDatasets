@@ -10,20 +10,19 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
-
 # ---------- 配置 ----------
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("请设置环境变量 DATABASE_URL")
 
-BATCH_SIZE = 100                 # 每批处理记录数
-LLM_MODEL = "qwen2.5:7b"         # Ollama 模型名称
-OLLAMA_URL = "http://localhost:11434/api/generate"
-LOG_FILE = "../../logs/refine_geo_desc.log"
-# 触发 LLM 的复杂度条件（template_match_key 包含这些关键词，或模糊等级为 SLIGHT/MODERATE，或距离等级为 Far）
-COMPLEX_TRIGGERS = ['Intersection', 'SLIGHT', 'MODERATE', 'Far']
+OLLAMA_URL = os.getenv("OLLAMA_URL")
+LLM_MODEL = os.getenv("LLM_MODEL")
 
+BATCH_SIZE = 100                 # 每批处理记录数
+
+# ---------- 日志 ----------
+LOG_FILE = "../../logs/refine_geo_desc.log"
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -34,15 +33,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # ---------- 数据库连接 ----------
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 Session = sessionmaker(bind=engine)
 
-import json
-import re
-import time
-import logging
-from typing import List, Dict, Any
 
 # ---------- 批量调用类方法 ----------
 class QwenRefiner:
@@ -71,7 +66,7 @@ class QwenRefiner:
             "4. 【口语化】适当加入“您呐”、“其实吧”、“顺着”、“拐个弯”等口语词，但不要过度。\n"
             "5. 【指代替换】若原文出现了两次相同的地名，第二次替换为“这儿”、“那儿”或“该处”。\n"
             "6. 【节奏控制】将一个长难句拆分为两个短句（逗号或句号分隔），增加停顿感。\n"
-            "7. 【语句通顺】去掉部分重复意思的词，如“大约约”等，使整个语句保持通顺、无语病。\n"
+            "7. 【语句通顺】去掉部分重复意思的词，使整个语句保持通顺、无语病。\n"
             "8. 你必须以JSON数组格式返回润色后的文本列表，每个元素对应输入列表的一条文本。只输出JSON数组，不要有其他解释。\n"
             "待改写的文本列表（JSON数组格式）：\n"
             f"{json.dumps(raw_texts, ensure_ascii=False)}"
@@ -138,9 +133,8 @@ class QwenRefiner:
 
     def refine(self, raw_text: str) -> str:
         """
-        调用 Qwen 进行风格迁移，若失败则返回原文本。
+        单条润色，支持解析 JSON 数组格式（兼容模型返回 ["..."] 的情况）
         """
-        # 构造批量Prompt
         system_prompt = (
             "你是一位地理描述润色专家。请将输入的“机器生成的地理描述”改写为“自然的中文指路口语”。\n"
             "改写铁律（必须严格遵守）：\n"
@@ -150,7 +144,7 @@ class QwenRefiner:
             "4. 【口语化】适当加入“您呐”、“其实吧”、“顺着”、“拐个弯”等口语词，但不要过度。\n"
             "5. 【指代替换】若原文出现了两次相同的地名，第二次替换为“这儿”、“那儿”或“该处”。\n"
             "6. 【节奏控制】将一个长难句拆分为两个短句（逗号或句号分隔），增加停顿感。\n"
-            "7. 【语句通顺】去掉部分重复意思的词，如“大约约”等，使整个语句保持通顺、无语病。\n"
+            "7. 【语句通顺】去掉部分重复意思的词，使整个语句保持通顺、无语病。\n"
             "8. 你必须以JSON数组格式返回润色后的文本列表，每个元素对应输入列表的一条文本。只输出JSON数组，不要有其他解释。\n"
         )
         payload = {
@@ -166,7 +160,14 @@ class QwenRefiner:
             response = requests.post(self.url, json=payload, timeout=70)
             if response.status_code == 200:
                 result = response.json()
-                return result.get("response", raw_text).strip()
+                raw_output = result.get("response", "").strip()
+                # 尝试解析 JSON
+                parsed = self._parse_json_array(raw_output)
+                if parsed is not None and isinstance(parsed, list) and len(parsed) > 0:
+                    return parsed[0]  # 取第一个元素
+                else:
+                    # 如果解析失败，直接返回原输出（可能是纯文本）
+                    return raw_output
             else:
                 logger.warning(f"LLM API 返回非200: {response.status_code}")
                 return raw_text
@@ -221,13 +222,10 @@ def validate_spatial_consistency(original: str, refined: str, expected_direction
     return True
 
 def process_batch(records: List[Dict[str, Any]], refiner: QwenRefiner) -> List[Dict[str, Any]]:
-    """
-    处理一批记录，支持批量LLM调用（每批20~30条）
-    """
     results = []
-    # 先进行前置清洗，并记录哪些需要LLM
     cleaned_list = []
     need_llm_indices = []
+
     for idx, rec in enumerate(records):
         raw = rec['description_raw']
         if not raw:
@@ -236,23 +234,37 @@ def process_batch(records: List[Dict[str, Any]], refiner: QwenRefiner) -> List[D
         cleaned = preprocess_remove_redundancy(raw, road_name)
         cleaned_list.append(cleaned)
 
-        # 判断是否触发LLM
+        # ---------- 优化后的触发条件 ----------
         need = False
         key = rec.get('template_match_key', '')
         amb = rec.get('ambiguity_level', 'EXACT')
         dist = rec.get('dist_level', '')
-        if any(kw in key for kw in ['Intersection']):
+        # 获取精确距离（如果可用），用于距离阈值判断
+        exact_dist = rec.get('exact_distance_m', 0)  # 需在查询中增加该字段
+
+        # 1. 拓扑复杂：路口（Intersection）始终触发
+        if 'Intersection' in key:
             need = True
-        if amb in ['SLIGHT', 'MODERATE']:
+
+        # 2. 方位模糊：仅 MODERATE 触发，SLIGHT 不触发（因为轻微偏移可由规则处理）
+        elif amb == 'MODERATE':
             need = True
-        if dist == 'Far':
+
+        # 3. 远距离：仅当距离 > 800 米时触发（避免 500~800 米的中等偏远也触发）
+        elif dist == 'Far' and exact_dist > 800:
             need = True
-        if not need and random.random() < 0.1:
-            need = True
+
+        # 4. 其他场景：若文本长度超过 40 字且包含复杂结构（如多个逗号/分句），触发
+        else:
+            # 统计逗号、句号、分号数量，大于2个分句且长度>40
+            if len(cleaned) > 40 and cleaned.count('，') + cleaned.count('。') + cleaned.count('；') >= 2:
+                need = True
+
+        # 不再保留随机触发，以降低总调用量
         need_llm_indices.append(need)
 
     # 将需要LLM的文本按20~30条分批
-    batch_size_llm = 25  # 可根据模型性能调整
+    batch_size_llm = 20  # 可根据模型性能调整
     llm_indices = [i for i, flag in enumerate(need_llm_indices) if flag]
     llm_results = [None] * len(records)  # 预填充
 
@@ -333,7 +345,8 @@ def main():
                 s.road_name,
                 s.direction_8,
                 s.ambiguity_level,
-                s.dist_level
+                s.dist_level,
+                s.exact_distance_m
             FROM geo_desc g
             LEFT JOIN spatial_relations s ON g.fid = s.id
             WHERE (g.description IS NULL OR g.description = '')

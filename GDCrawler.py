@@ -6,10 +6,9 @@ import os
 from typing import List, Dict, Any, Optional
 
 # --- 配置部分 ---
-#API_KEY = "c3ae1fc3acd0b8b01df5a82c42c6106c"  # key-zc
-#API_KEY = "4407ee6c510c249a6c193db40ff19229"  # key-cy
-#API_KEY = "f298283abbc3917b4a0da1aa71525656" #key-cying
-API_KEY = "1dea4c078621f0aa4475423e95a55506" #key-zq
+load_dotenv()
+GD_API_KEY = os.getenv("GD_API_KEY")
+
 AD_CODE = "110119"  # 搜索区域:海淀区(110108) 朝阳区(110105) 东城区(110101) 西城区(110102) 丰台区(110106) 石景山区(110107) 门头沟区(110109) 房山区(110111) 通州区(110112) 顺义区(110113)
                     # 昌平区(110114) 大兴区(110115) 怀柔区(110116) 平谷区(110117) 密云区(110118) 延庆区(110119)
 CITY_LIMIT = "true"  # 严格限制在区域内搜索
@@ -36,7 +35,7 @@ def search_poi_by_type(typecode: str, page_num: int = 1) -> Optional[Dict[str, A
     :return: API返回的JSON数据，失败时返回None
     """
     params = {
-        "key": API_KEY,
+        "key": GD_API_KEY,
         "types": typecode,  # 使用poi类型编码进行精确搜索
         "region": AD_CODE,
         "city_limit": "true",  # 仅召回海淀区数据

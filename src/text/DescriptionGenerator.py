@@ -14,7 +14,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEMPLATE_YAML_PATH = "../../config/template_library_new.yaml"
 BATCH_SIZE = 200
-VARIANTS_PER_RECORD = 2
+VARIANTS_PER_RECORD = 1
 OUTPUT_TABLE = "geo_desc"
 
 logging.basicConfig(level=logging.INFO)
@@ -56,11 +56,11 @@ def insert_batch(conn, batch_data):
     values = [
         (
             row['fid'],
-            row['description_raw'],
-            row['template_match_key'],
-            row.get('landmark_name', ''),
-            row.get('target_x', ''),
-            row.get('target_y', '')
+           row['description_raw'],
+           row['template_match_key'],
+            row.get('ref_name', ''),
+           row.get('target_x', ''),
+           row.get('target_y', '')
         )
         for row in batch_data
     ]
@@ -82,6 +82,7 @@ def main():
                 template_match_key TEXT,
                 description_raw TEXT NOT NULL,
                 description TEXT,
+                description_en TEXT,
                 ref_name TEXT,
                 target_x TEXT,
                 target_y TEXT,
@@ -93,7 +94,7 @@ def main():
 
     # 获取总记录数
     # total = pd.read_sql("SELECT COUNT(*) FROM spatial_relations", engine).iloc[0, 0]
-    total = 200
+    total = 100
     filler = SlotFiller(TEMPLATE_YAML_PATH)
     offset = 0
     buffer = []
