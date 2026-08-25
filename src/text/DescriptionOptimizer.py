@@ -318,25 +318,30 @@ def main():
         """))
         conn.commit()
 
-    # 查询待处理记录的总数
+    # 获取待处理记录的最小ID（作为起始游标）
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT COUNT(g.id)
-            FROM geo_desc g
-            LEFT JOIN spatial_relations s ON g.fid = s.id
-            WHERE (g.description IS NULL OR g.description = '')
+            SELECT MIN(id) FROM geo_desc 
+            WHERE description IS NULL OR description = ''
+        """))
+        last_id = result.scalar()
+        if last_id is None:
+            logger.info("没有待优化的记录。")
+            return
+
+    total = 0
+    # 先统计总数用于进度显示
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT COUNT(id) FROM geo_desc 
+            WHERE description IS NULL OR description = ''
         """))
         total = result.scalar()
     logger.info(f"待优化记录总数: {total}")
-    if total == 0:
-        logger.info("所有记录已优化，无需处理。")
-        return
 
-    offset = 0
     processed = 0
-    total = 100
-    while offset < total:
-        # 读取一批记录
+    while True:
+        # 查询ID大于 last_id 且 description 为空的记录，按ID排序
         query = text("""
             SELECT 
                 g.id,
@@ -349,18 +354,20 @@ def main():
                 s.exact_distance_m
             FROM geo_desc g
             LEFT JOIN spatial_relations s ON g.fid = s.id
-            WHERE (g.description IS NULL OR g.description = '')
+            WHERE g.id >= :last_id 
+              AND (g.description IS NULL OR g.description = '')
             ORDER BY g.id
-            LIMIT :limit OFFSET :offset
+            LIMIT :limit
         """)
         with engine.connect() as conn:
-            rows = conn.execute(query, {'limit': BATCH_SIZE, 'offset': offset})
-            # 修复：将 Row 对象转换为字典
+            rows = conn.execute(query, {'last_id': last_id, 'limit': BATCH_SIZE})
             records = [dict(row._mapping) for row in rows]
+
         if not records:
             break
 
-        logger.info(f"正在处理第 {offset+1} - {offset+len(records)} 条")
+        ids = [r['id'] for r in records]
+        logger.info(f"正在处理记录 ID: {min(ids)} - {max(ids)}（共 {len(records)} 条）")
         updates = process_batch(records, refiner)
 
         # 批量更新 geo_desc.description
@@ -372,9 +379,11 @@ def main():
                         {'desc': item['description'], 'id': item['id']}
                     )
                 conn.commit()
+
         processed += len(records)
-        offset += BATCH_SIZE
-        logger.info(f"已处理 {processed}/{total} 条记录")
+        # 更新 last_id 为本批最大ID
+        last_id = max(ids)
+        logger.info(f"已处理 {processed}/{total} 条记录，当前游标ID: {last_id}")
 
     logger.info("所有记录优化完成！")
 

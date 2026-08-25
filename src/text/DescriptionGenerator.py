@@ -13,7 +13,7 @@ from SlotFiller import SlotFiller
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEMPLATE_YAML_PATH = "../../config/template_library_new.yaml"
-BATCH_SIZE = 200
+BATCH_SIZE = 1000
 VARIANTS_PER_RECORD = 1
 OUTPUT_TABLE = "geo_desc"
 
@@ -93,8 +93,8 @@ def main():
         conn.commit()
 
     # 获取总记录数
-    # total = pd.read_sql("SELECT COUNT(*) FROM spatial_relations", engine).iloc[0, 0]
-    total = 100
+    total = pd.read_sql("SELECT COUNT(*) FROM spatial_relations", engine).iloc[0, 0]
+    # total = 100
     filler = SlotFiller(TEMPLATE_YAML_PATH)
     offset = 0
     buffer = []
