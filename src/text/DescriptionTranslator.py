@@ -30,8 +30,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BATCH_SIZE = 100              # 从数据库读取的记录批次大小（读取多，但翻译分批）
-TRANSLATE_BATCH_SIZE = 20     # 每次调用 API 翻译的条数（根据模型性能调整）
+BATCH_SIZE = 300              # 从数据库读取的记录批次大小（读取多，但翻译分批）
+TRANSLATE_BATCH_SIZE = 30     # 每次调用 API 翻译的条数（根据模型性能调整）
 
 # ---------- 数据库连接 ----------
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)

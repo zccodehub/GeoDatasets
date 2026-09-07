@@ -30,7 +30,7 @@ def calculate_composite_significance(input_path: str, output_path: str):
     #     (0.4 * df['exposure_scaled'] + 0.35 * df['centrality_scaled'] + 0.25 * df['isolation_scaled'])/100
     # )
 
-    spatial_score = (0.4 * df['exposure_scaled'] + 0.4 * df['centrality_scaled'] + 0.2 * df['isolation_scaled'])
+    spatial_score = (0.4 * df['exposure_scaled'] + 0.35 * df['centrality_scaled'] + 0.25 * df['isolation_scaled'])
 
     df['spatial_score'] = (spatial_score - spatial_score.min()) / (spatial_score.max() - spatial_score.min())
     # 第二步：计算 composite_score

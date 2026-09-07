@@ -36,17 +36,6 @@ def classify_priority(row, quantiles):
     else:
         return 4
 
-def classify_priority_2(row, quantiles):
-    sis, cis = row[COL_SIS], row[COL_CIS]
-    if sis >= quantiles['SIS_P80'] and cis >= quantiles['CIS_P80']:
-        return 1
-    elif cis >= quantiles['CIS_P70'] and sis <= quantiles['SIS_P80']:
-        return 2
-    elif sis >= quantiles['SIS_P70'] and cis <= quantiles['CIS_P80']:
-        return 3
-    else:
-        return 4
-
 def run_landmark_extraction():
     # 1. 加载数据
     print("Loading data...")

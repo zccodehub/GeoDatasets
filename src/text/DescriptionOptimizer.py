@@ -19,7 +19,8 @@ if not DATABASE_URL:
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 LLM_MODEL = os.getenv("LLM_MODEL")
 
-BATCH_SIZE = 100                 # 每批处理记录数
+BATCH_SIZE = 300 # 每批处理记录数
+BATCH_SIZE_LLM = 30  # 将需要LLM的文本按20~30条分批
 
 # ---------- 日志 ----------
 LOG_FILE = "../../logs/refine_geo_desc.log"
@@ -263,13 +264,11 @@ def process_batch(records: List[Dict[str, Any]], refiner: QwenRefiner) -> List[D
         # 不再保留随机触发，以降低总调用量
         need_llm_indices.append(need)
 
-    # 将需要LLM的文本按20~30条分批
-    batch_size_llm = 20  # 可根据模型性能调整
     llm_indices = [i for i, flag in enumerate(need_llm_indices) if flag]
     llm_results = [None] * len(records)  # 预填充
 
-    for start in range(0, len(llm_indices), batch_size_llm):
-        batch_indices = llm_indices[start:start+batch_size_llm]
+    for start in range(0, len(llm_indices), BATCH_SIZE_LLM):
+        batch_indices = llm_indices[start:start+BATCH_SIZE_LLM]
         batch_texts = [cleaned_list[i] for i in batch_indices]
         logging.info(f"批量调用LLM，数量: {len(batch_texts)}")
         refined_batch = refiner.refine_batch(batch_texts)
@@ -281,7 +280,7 @@ def process_batch(records: List[Dict[str, Any]], refiner: QwenRefiner) -> List[D
                 direction_8 = records[orig_idx].get('direction_8', '')
                 if validate_spatial_consistency(cleaned_list[orig_idx], refined_text, direction_8):
                     llm_results[orig_idx] = refined_text
-                    logging.warning(f"记录 {records[orig_idx]['id']} LLM润色后校验成功")
+                    logging.info(f"记录 {records[orig_idx]['id']} LLM润色后校验成功")
                 else:
                     logging.warning(f"记录 {records[orig_idx]['id']} LLM润色后方位校验失败，回退至清洗文本")
                     llm_results[orig_idx] = cleaned_list[orig_idx]
