@@ -15,13 +15,13 @@ if not DATABASE_URL:
     raise ValueError("请设置环境变量 DATABASE_URL")
 
 # Ollama 配置（可从环境变量读取，也可直接指定）
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
-LLM_EN_MODEL = os.getenv("LLM_EN_MODEL", "ali6parmak/hy-mt1.5:1.8b")  # 替换为你实际的模型名
+OLLAMA_URL = os.getenv("OLLAMA_URL")
+LLM_EN_MODEL = os.getenv("LLM_MODEL")  # 替换为你实际的模型名
 
 # 日志配置
 LOG_FILE = "../../logs/translate_geo_desc.log"
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(LOG_FILE, encoding='utf-8'),
@@ -30,14 +30,33 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BATCH_SIZE = 300              # 从数据库读取的记录批次大小（读取多，但翻译分批）
-TRANSLATE_BATCH_SIZE = 30     # 每次调用 API 翻译的条数（根据模型性能调整）
+BATCH_SIZE = 20              # 从数据库读取和翻译的批次大小
 
 # ---------- 数据库连接 ----------
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 # ---------- 翻译器类 ----------
 class Translator:
+    @staticmethod
+    def contains_chinese(text: str) -> bool:
+        """检查文本是否包含中文字符或中文标点"""
+        if text is None:
+            return False
+        # 检测Unicode中文范围：基本汉字、扩展汉字
+        for char in text:
+            # 基本汉字范围
+            if '\u4e00' <= char <= '\u9fff':
+                return True
+            # 中文标点符号范围（部分）
+            if '\u3000' <= char <= '\u303f':
+                return True
+            # 全角标点范围
+            if '\uff00' <= char <= '\uffef':
+                # 排除英文字母和数字的全角形式
+                if not ('\uff21' <= char <= '\uff3a' or '\uff41' <= char <= '\uff5a' or '\uff10' <= char <= '\uff19'):
+                    return True
+        return False
+
     def __init__(self, model=LLM_EN_MODEL, url=OLLAMA_URL):
         self.model = model
         self.url = url
@@ -54,13 +73,13 @@ class Translator:
 
         # 构造批量翻译 Prompt
         system_prompt = (
-            "你是一个专业的中英翻译引擎。请将以下中文文本逐条翻译为英文。\n"
+            "你是一个专业的中英翻译引擎。请将以下中文文本逐条翻译为英文。\n\n"
+            "输入是一个JSON数组格式的中文文本列表。\n"
             "要求：\n"
             "1. 只输出英文翻译，不添加任何解释、前缀或后缀。\n"
-            "2. 翻译要准确、自然、地道，保留原文语义和风格。\n"
-            "3. 输出格式：必须返回一个 JSON 数组，数组长度与输入列表相同，每个元素为对应序号的英文翻译。\n"
-            "4. 只输出 JSON 数组，不要有其他内容。\n\n"
-            "待翻译的中文文本列表（JSON 数组格式）：\n"
+            "2. 输出格式：必须返回一个JSON数组，格式与输入完全相同，只是内容替换为英文翻译。\n"
+            "3. 只需要输出JSON数组，不要有其他任何内容。\n\n"
+            "输入JSON数组：\n"
             f"{json.dumps(texts, ensure_ascii=False)}"
         )
 
@@ -76,18 +95,32 @@ class Translator:
 
         try:
             response = requests.post(self.url, json=payload, timeout=240)
-            if response.status_code != 200:
-                logger.warning(f"批量翻译请求失败，状态码 {response.status_code}，降级为逐条翻译")
+            response.raise_for_status()  # 检查HTTP错误
+            
+            try:
+                result = response.json()
+            except Exception as json_error:
+                logger.error(f"批量翻译响应不是有效的JSON: {json_error}")
+                logger.debug(f"原始响应文本: {response.text[:200]}...")
                 return [self.translate_single(t) for t in texts]
-
-            result = response.json()
+            
             raw_output = result.get("response", "").strip()
+            logger.debug(f"批量翻译原始输出: {raw_output[:200]}...")
             parsed = self._parse_json_array(raw_output)
             if parsed is not None and len(parsed) == len(texts):
-                return parsed
+                # 检查翻译结果是否包含中文
+                checked_translations = []
+                for i, translation in enumerate(parsed):
+                    if translation is not None and self.contains_chinese(translation):
+                        logger.warning(f"批量翻译第 {i+1} 条包含中文: '{translation[:50]}...'，设置为NULL")
+                        checked_translations.append(None)
+                    else:
+                        checked_translations.append(translation)
+                return checked_translations
             else:
-                logger.warning(f"批量翻译解析结果数量不匹配，预期{len(texts)}，实际{len(parsed) if parsed else 0}，降级为逐条翻译")
-                return [self.translate_single(t) for t in texts]
+                 logger.warning(f"批量翻译解析结果数量不匹配，预期{len(texts)}，实际{len(parsed) if parsed else 0}")
+                 logger.debug(f"解析失败的原始输出: {raw_output[:500]}...")
+                 return [self.translate_single(t) for t in texts]
 
         except Exception as e:
             logger.error(f"批量翻译异常: {e}，降级为逐条翻译")
@@ -99,38 +132,49 @@ class Translator:
             f"你是一个专业的中英翻译引擎。请将以下中文文本翻译为英文：\n{text}\n"
             "要求：\n"
             "1. 只输出英文翻译，不添加任何解释、前缀或后缀。\n"
-            "2. 翻译要准确、自然、地道，保留原文语义和风格。\n"
-            "3. 输出格式：必须返回一个 JSON 数组，数组长度与输入列表相同，每个元素为对应序号的英文翻译。\n"
-            "4. 只输出 JSON 数组，不要有其他内容。\n\n"
+            "2. 输出格式：返回一个JSON数组，例如：[\"英文翻译\"]\n"
+            "3. 只需要输出JSON数组，不要有其他任何内容。\n\n"
         )
         payload = {
             "model": self.model,
             "prompt": prompt,
             "stream": False,
             "temperature": 0.1,
-            "max_tokens": 200,
+            "max_tokens": 500,
             "timeout": 60
         }
         try:
             response = requests.post(self.url, json=payload, timeout=70)
-            if response.status_code == 200:
+            response.raise_for_status()
+            
+            try:
                 result = response.json()
-                raw = result.get("response", "").strip()
-                # 尝试解析 JSON（预防模型仍返回 ["..."] 格式）
-                parsed = self._parse_json_array(raw)
-                if parsed is not None and isinstance(parsed, list) and len(parsed) > 0:
-                    return parsed[0]
-                return raw
-            else:
-                logger.warning(f"单条翻译返回非200: {response.status_code}")
-                return text  # 保底返回原文（但会标记）
+            except Exception as json_error:
+                logger.error(f"单条翻译响应不是有效的JSON: {json_error}")
+                logger.debug(f"原始响应文本: {response.text[:200]}...")
+                return None
+            
+            raw = result.get("response", "").strip()
+            logger.debug(f"单条翻译原始输出: {raw[:200]}...")
+            # 尝试解析 JSON（预防模型仍返回 ["..."] 格式）
+            parsed = self._parse_json_array(raw)
+            if parsed is not None and isinstance(parsed, list) and len(parsed) > 0:
+                translation = parsed[0]
+                if translation is not None and self.contains_chinese(translation):
+                    logger.warning(f"单条翻译包含中文: '{translation[:50]}...'，设置为NULL")
+                    return None
+                return translation
+            return None  # 返回 None 而不是原文
         except Exception as e:
             logger.error(f"单条翻译异常: {e}")
-            return text
+            return None  # 返回 None 而不是原文
 
     @staticmethod
     def _parse_json_array(text: str):
         """从可能包含 Markdown 或多余字符的文本中提取 JSON 数组"""
+        if not text or text.strip() == '':
+            logger.warning(f"_parse_json_array: 输入文本为空")
+            return None
         try:
             return json.loads(text)
         except json.JSONDecodeError:
@@ -145,12 +189,36 @@ class Translator:
             try:
                 return json.loads(json_str)
             except json.JSONDecodeError:
+                # 可能不是JSON格式，尝试其他格式
                 pass
+        
+        # 尝试处理纯文本列表格式
+        # 可能是每行一个翻译
+        lines = text.strip().split('\n')
+        if lines and len(lines) > 0:
+            # 清理每行内容
+            cleaned_lines = []
+            for line in lines:
+                line = line.strip()
+                # 移除列表标记如"1. ", "2. ", "- ", "* "等
+                line = re.sub(r'^\d+\.\s+', '', line)
+                line = re.sub(r'^[\-\*]\s+', '', line)
+                line = re.sub(r'^["\'](.*)["\']$', r'\1', line)
+                cleaned_lines.append(line)
+            logger.debug(f"_parse_json_array: 处理为非JSON列表，找到 {len(cleaned_lines)} 行")
+            return cleaned_lines
         return None
-
 # ---------- 主处理流程 ----------
 def main():
     translator = Translator()
+    
+    # 初始化统计计数器
+    stats = {
+        'total_processed': 0,
+        'chinese_detected': 0,
+        'translation_failed': 0,
+        'null_filled': 0
+    }
 
     # 1. 确保目标列存在
     with engine.connect() as conn:
@@ -205,40 +273,59 @@ def main():
         logger.info(f"正在处理第 {offset+1} - {offset+len(records)} 条")
 
         # 提取待翻译文本，过滤空文本
-        texts = [rec['description'] for rec in records if rec['description']]
+        texts = [rec['description'] for rec in records]
         if not texts:
             offset += BATCH_SIZE
             continue
 
         # 批量翻译（分批调用，避免单次请求过大）
         all_translations = []
-        for i in range(0, len(texts), TRANSLATE_BATCH_SIZE):
-            batch_texts = texts[i:i+TRANSLATE_BATCH_SIZE]
-            logger.info(f"  翻译批次 {i//TRANSLATE_BATCH_SIZE + 1}/{ (len(texts)-1)//TRANSLATE_BATCH_SIZE + 1 }，条数 {len(batch_texts)}")
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch_texts = texts[i:i+BATCH_SIZE]
+            logger.info(f"  翻译批次 {i//BATCH_SIZE + 1}/{ (len(texts)-1)//BATCH_SIZE + 1 }，条数 {len(batch_texts)}")
             translated = translator.translate_batch(batch_texts)
             all_translations.extend(translated)
             # 适当延迟，避免模型过载
             time.sleep(0.1)
 
-        # 确保翻译数量与记录数量一致（若不一致，用原文填充缺失）
+    # 确保翻译数量与记录数量一致（若不一致，用NULL填充缺失）
         if len(all_translations) < len(records):
-            logger.warning(f"翻译结果数量 ({len(all_translations)}) 少于记录数 ({len(records)})，用原文填充")
-            all_translations.extend([records[len(all_translations)]['description']] * (len(records) - len(all_translations)))
+            logger.warning(f"翻译结果数量 ({len(all_translations)}) 少于记录数 ({len(records)})，用NULL填充")
+            stats['null_filled'] += (len(records) - len(all_translations))
+            all_translations.extend([None] * (len(records) - len(all_translations)))
+        elif len(all_translations) > len(records):
+            logger.warning(f"翻译结果数量 ({len(all_translations)}) 多于记录数 ({len(records)})，截断多余的部分")
+            all_translations = all_translations[:len(records)]
 
         # 批量更新
+        chinese_count = 0
         with engine.connect() as conn:
             for rec, trans in zip(records, all_translations):
+                # 检查翻译是否包含中文（双重检查）
+                if trans is not None and translator.contains_chinese(trans):
+                    chinese_count += 1
+                    trans = None
+
                 conn.execute(
                     text("UPDATE geo_desc SET description_en = :en WHERE id = :id"),
                     {'en': trans, 'id': rec['id']}
                 )
             conn.commit()
 
+        if chinese_count > 0:
+            stats['chinese_detected'] += chinese_count
+            logger.info(f"  本批次检测到 {chinese_count} 条翻译包含中文，已设置为NULL")
+
         processed += len(records)
+        stats['total_processed'] += len(records)
         offset += BATCH_SIZE
         logger.info(f"已处理 {processed}/{total} 条记录")
 
     logger.info("所有记录翻译完成！")
+    logger.info(f"统计汇总:")
+    logger.info(f"  总处理记录数: {stats['total_processed']}")
+    logger.info(f"  检测到中文的翻译数: {stats['chinese_detected']}")
+    logger.info(f"  用NULL填充的缺失翻译数: {stats['null_filled']}")
 
 if __name__ == "__main__":
     main()
