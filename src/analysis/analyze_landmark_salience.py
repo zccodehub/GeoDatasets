@@ -182,12 +182,12 @@ def plot_academic_figures(df, output_dir):
     # 绘制 图 5.1 单变量直方图与 KDE
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     
-    sns.histplot(df['sis'], kde=True, ax=axes[0], color='#1f77b4', bins=100, stat='density')
+    sns.histplot(df['sis'], kde=True, ax=axes[0], color='#B22222', bins=100, stat='density')
     axes[0].set_title('(a) Spatial Index of Salience (SIS) Distribution', fontsize=12, fontweight='bold')
     axes[0].set_xlabel('SIS', fontsize=10, fontweight='bold')
     axes[0].set_ylabel('Density', fontsize=10, fontweight='bold')
     
-    sns.histplot(df['cis'], kde=True, ax=axes[1], color='#ff7f0e', bins=100, stat='density')
+    sns.histplot(df['cis'], kde=True, ax=axes[1], color='#104E8B', bins=100, stat='density')
     axes[1].set_title('(b) Cognitive Index of Salience (CIS) Distribution', fontsize=12, fontweight='bold')
     axes[1].set_xlabel('CIS', fontsize=10, fontweight='bold')
     axes[1].set_ylabel('Density', fontsize=10, fontweight='bold')
@@ -203,7 +203,7 @@ def plot_academic_figures(df, output_dir):
     sample_size = min(20000, len(df))
     sample_df = df.sample(n=sample_size, random_state=42)
     
-    sns.scatterplot(data=sample_df, x='sis', y='cis', alpha=0.25, s=12, color='#2ca02c', ax=ax)
+    sns.scatterplot(data=sample_df, x='sis', y='cis', alpha=0.25, s=12, color='#F37254', ax=ax)
     
     p75_sis = df['sis'].quantile(0.75)
     p75_cis = df['cis'].quantile(0.75)
@@ -226,27 +226,27 @@ def plot_academic_figures(df, output_dir):
     sample_size = min(20000, len(df))
     sample_df = df.sample(n=sample_size, random_state=42)
 
-    sns.scatterplot(data=sample_df, x='sis', y='cis', alpha=0.6, s=10, color='#2ca02c', ax=ax)
+    sns.scatterplot(data=sample_df, x='sis', y='cis', alpha=0.85, s=8, color='#2ca02c', ax=ax)
 
-    p75_sis = df['sis'].quantile(0.75)
+    p75_sis = df['sis'].quantile(0.78)
     p75_cis = df['cis'].quantile(0.75)
 
-    ax.axvline(x=p75_sis, color='crimson', linestyle='--', linewidth=1.5, label=f'SIS P75 Boundary ({p75_sis:.4f})')
-    ax.axhline(y=p75_cis, color='navy', linestyle='--', linewidth=1.5, label=f'CIS P75 Boundary ({p75_cis:.4f})')
+    ax.axvline(x=p75_sis, color='#B22222', linestyle='--', linewidth=1.8, label=f'SIS P75 Boundary')
+    ax.axhline(y=p75_cis, color='#104E8B', linestyle='--', linewidth=1.8, label=f'CIS P75 Boundary')
 
     # 添加象限标签
     ax.text(0.5, 0.65, 'Q1: Core Landmarks', transform=ax.transAxes,
             fontsize=10,fontweight='bold',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.5, edgecolor='crimson'))
+            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7, edgecolor='crimson'))
     ax.text(0.01, 0.65, 'Q2: Potential Landmarks)', transform=ax.transAxes,
             fontsize=10, fontweight='bold',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.5, edgecolor='#1f77b4'))
+            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7, edgecolor='#1f77b4'))
     ax.text(0.5, 0.15, 'Q3: Spatial Anchors)', transform=ax.transAxes,
             fontsize=10, fontweight='bold',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.5, edgecolor='#ff7f0e'))
+            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7, edgecolor='#ff7f0e'))
     ax.text(0.03, 0.15, 'Q4: Backup Entities)', transform=ax.transAxes,
             fontsize=10,fontweight='bold',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.5, edgecolor='gray'))
+            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7, edgecolor='gray'))
 
     # ax.set_title('Bivariate Scatter & Four-Quadrant Decoupling (SIS vs CIS)', fontsize=12, fontweight='bold')
     ax.set_xlabel('SIS', fontsize=10, fontweight='bold')

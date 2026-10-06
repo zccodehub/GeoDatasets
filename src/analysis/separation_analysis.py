@@ -2,7 +2,7 @@
 """
 入选地标集与背景实体的显著性分离度检验 (Section 5.3.1)
 实现 Welch t检验、Mann-Whitney U检验、Cohen's d效应量计算与分布可视化
-对应学术论文 5.3.1 章节：入选地标集与背景实体的显著性分离度检验
+入选地标集与背景实体的显著性分离度检验
 
 PostGIS 数据库 landmarks 表字段映射：
   - cognition_score AS cis
@@ -185,9 +185,9 @@ def analyze_separation(df, output_dir=OUTPUT_DIR):
     
     # 绘制小提琴图，内部嵌入箱线图 (inner='box')
     sns.violinplot(data=data_for_violin, x='Category', y='LIS',
-                  palette={'Landmarks': '#d62728', 'Non-landmarks': '#999999'},
+                  palette={'Landmarks': '#d62728', 'Non-landmarks': '#045B98'},
                   inner='box',  # 在小提琴图内部绘制箱线图
-                  linewidth=1.5, saturation=0.85, alpha=0.8, ax=ax)
+                  linewidth=1, saturation=0.85, alpha=0.8, ax=ax)
     
     # 美化图形
     # ax.set_title('图5.6 地标集与非地标集LIS分布小提琴图与箱线图联合展示',fontsize=14, pad=15, fontweight='bold')

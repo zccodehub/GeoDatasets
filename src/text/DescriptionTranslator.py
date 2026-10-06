@@ -111,10 +111,10 @@ class Translator:
                 # 检查翻译结果是否包含中文
                 checked_translations = []
                 for i, translation in enumerate(parsed):
-                    if translation is not None and self.contains_chinese(translation):
-                        logger.warning(f"批量翻译第 {i+1} 条包含中文: '{translation[:50]}...'，设置为NULL")
-                        checked_translations.append(None)
-                    else:
+                    # if translation is not None and self.contains_chinese(translation):
+                    #     logger.warning(f"批量翻译第 {i+1} 条包含中文: '{translation[:50]}...'，设置为NULL")
+                    #     checked_translations.append(None)
+                    # else:
                         checked_translations.append(translation)
                 return checked_translations
             else:
@@ -160,9 +160,9 @@ class Translator:
             parsed = self._parse_json_array(raw)
             if parsed is not None and isinstance(parsed, list) and len(parsed) > 0:
                 translation = parsed[0]
-                if translation is not None and self.contains_chinese(translation):
-                    logger.warning(f"单条翻译包含中文: '{translation[:50]}...'，设置为NULL")
-                    return None
+                # if translation is not None and self.contains_chinese(translation):
+                #     logger.warning(f"单条翻译包含中文: '{translation[:50]}...'，设置为NULL")
+                #     return None
                 return translation
             return None  # 返回 None 而不是原文
         except Exception as e:
@@ -302,9 +302,9 @@ def main():
         with engine.connect() as conn:
             for rec, trans in zip(records, all_translations):
                 # 检查翻译是否包含中文（双重检查）
-                if trans is not None and translator.contains_chinese(trans):
-                    chinese_count += 1
-                    trans = None
+                # if trans is not None and translator.contains_chinese(trans):
+                #     chinese_count += 1
+                #     trans = None
 
                 conn.execute(
                     text("UPDATE geo_desc SET description_en = :en WHERE id = :id"),

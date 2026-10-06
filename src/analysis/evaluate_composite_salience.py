@@ -222,8 +222,8 @@ def plot_section_5_2_figures(df, output_dir):
     df['linear_fusion'] = 0.5 * df['sis'] + 0.5 * df['cis']
     df['mult_fusion'] = np.sqrt(np.maximum(df['sis'] * df['cis'], 0.0))
     
-    sns.kdeplot(data=df['lis'], ax=ax, color='#d62728', linewidth=2.2, label='SNLM')
-    sns.kdeplot(data=df['linear_fusion'], ax=ax, color='#1f77b4', linewidth=1.8, linestyle='--', label='WLM')
+    sns.kdeplot(data=df['lis'], ax=ax, color='#B22222', linewidth=2.2, label='SNLM')
+    sns.kdeplot(data=df['linear_fusion'], ax=ax, color='#104E8B', linewidth=1.8, linestyle='--', label='WLM')
     sns.kdeplot(data=df['mult_fusion'], ax=ax, color='#2ca02c', linewidth=1.8, linestyle=':', label='PM')
     
     # ax.set_title('Density Distributions of Different Salience Fusion Models', fontsize=12, fontweight='bold')
