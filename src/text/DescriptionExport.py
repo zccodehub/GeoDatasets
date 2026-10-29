@@ -27,11 +27,20 @@ def export_to_csv():
     query = text("""
         SELECT 
             description,
+            description_en,
             ref_name,
-            target_x,
-            target_y
-        FROM geo_desc
-        ORDER BY id
+            geo_desc.target_x,
+            geo_desc.target_y,
+            exact_distance_m,
+            dist_level,
+            azimuth_deg,
+            direction_8,
+            direction_16,
+            topology_type,
+            combo_class
+        FROM geo_desc, spatial_relations
+        WHERE geo_desc.fid = spatial_relations.id
+        ORDER BY geo_desc.id
     """)
 
     # 使用流式查询（yield_per）避免一次性加载所有数据到内存
