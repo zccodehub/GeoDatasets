@@ -25,7 +25,7 @@ def export_to_csv():
 
     # 查询需要导出的字段，并重命名 description -> description_zh
     query = text("""
-        SELECT 
+        SELECT
             description,
             description_en,
             ref_name,

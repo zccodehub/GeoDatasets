@@ -1,0 +1,53 @@
+AIGeoRel — Landmark-Anchored Relative Locality Description Dataset
+Construction code: Geocoding_dataset
+Copyright 2026 Can Zhuang and Yi Cui
+
+This product includes software developed at
+School of Civil Engineering and Geomatics, Shandong University of Technology
+(Zibo, Shandong, China).
+
+The code in this repository is licensed under the Apache License, Version 2.0.
+See the LICENSE file for the full text. The AIGeoRel dataset distributed through
+GitHub Releases is licensed separately under CC BY 4.0.
+
+---------------------------------------------------------------------------
+Third-party components and data
+---------------------------------------------------------------------------
+
+This product bundles no third-party source code, but the pipeline operates on
+data and depends on libraries that carry their own terms:
+
+  * Amap (Gaode) Open Platform POI service
+    POI records were retrieved through the Amap Web Service API and remain
+    subject to the Amap Open Platform Terms of Service. They are not
+    relicensed by the Apache License 2.0 covering this code.
+
+  * OpenStreetMap contributors
+    Road network data (road centerlines, junctions, road classes) are
+    © OpenStreetMap contributors and available under the Open Database
+    License (ODbL) 1.0. https://www.openstreetmap.org/copyright
+
+  * Administrative boundary data
+    District-level boundaries used for spatial stratification follow the
+    terms of their originating provider.
+
+Third-party Python libraries (pandas, GeoPandas, Shapely, SciPy, SQLAlchemy,
+NetworkX, neatnet, matplotlib, seaborn, jieba, and others) are installed as
+dependencies and are not redistributed here; each remains under its own
+license. See requirements.txt for the full dependency list.
+
+---------------------------------------------------------------------------
+Attribution for academic use
+---------------------------------------------------------------------------
+
+If you use the dataset or the pipeline in academic work, please cite:
+
+  Zhuang, C., & Cui, Y. (2026). AIGeoRel: A Landmark-Anchored Relative Spatial
+  Description Corpus of Beijing (Version v1.0.0) [Data set]. GitHub.
+  https://github.com/zccodehub/GeoDatasets/releases/tag/v1.0.0
+
+  Zhuang, C., & Cui, Y. (2026). Landmark-anchored and LLM-driven construction
+  of relative locality description datasets. International Journal of
+  Geographical Information Science (submitted).
+
+A machine-readable citation is provided in the "Citation" section of README.md.
