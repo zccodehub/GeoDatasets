@@ -1,4 +1,4 @@
-# AIGeoRel — Construction Code for a Landmark-Anchored Relative Locality Description Dataset
+# Landmark-Anchored and LLM-Driven Construction of Relative Locality Description Datasets
 
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B%20%2B%20PostGIS%203.x-336791.svg)](https://postgis.net/)
