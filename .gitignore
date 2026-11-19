@@ -7,7 +7,6 @@ __pycache__/
 
 # 日志和数据库
 *.log
-data/*.csv
 
 # 环境变量
 .env
