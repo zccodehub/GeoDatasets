@@ -1,16 +1,12 @@
 # Landmark-Anchored and LLM-Driven Construction of Relative Locality Description Datasets
 
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
-
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B%20%2B%20PostGIS%203.x-336791.svg)
-
 ![Code License](https://img.shields.io/badge/code%20license-Apache--2.0-blue.svg)
-
 ![Data License](https://img.shields.io/badge/data%20license-CC%20BY%204.0-green.svg)
-
 ![Records](https://img.shields.io/badge/records-532%2C285-orange.svg)
 
-This repository contains the full construction pipeline for **AIGeoRel**, a large-scale bilingual  
+This repository contains the construction pipeline for **AIGeoRel**, a large-scale bilingual  
 (Chinese–English) corpus of *relative locality descriptions* — natural-language locative expressions that  
 identify a target place by anchoring it to a nearby landmark ("往北京汽车压铸件厂南边看，嘉会湖地铁站A口大概在那儿940米远").
 
